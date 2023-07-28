@@ -4,6 +4,7 @@ from .backends import SoyMLBackend
 class SoyMLSession(object):
     def __init__(
         self,
+        log=None,
         use_ort=False,
         ort_model_file=None,
         use_ncnn=False,
@@ -14,6 +15,8 @@ class SoyMLSession(object):
         use_torch=False,
         torch_model_file=None,
     ):
+        self.log = log.logger_for("soyml_session") if log else None
+
         self.backend = SoyMLBackend.UNKNOWN
         if use_ort:
             self.backend = SoyMLBackend.ONNXRUNTIME
@@ -46,6 +49,9 @@ class SoyMLSession(object):
             from .session_torch import session_torch_init
 
             session_torch_init(self)
+
+        if self.log:
+            self.log.trace(f"initialized session with backend {self.backend}")
 
     def execute(self, inputs, output_names):
         # # ensure there's exactly one output (for now)

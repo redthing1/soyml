@@ -8,7 +8,8 @@ def session_ncnn_init(self):
     try:
         self.ncnn_net = ncnn.Net()
         self.ncnn_net.opt.use_vulkan_compute = True
-        logger.debug(f"[session_ncnn] loading ncnn model: {self.ncnn_model_file}")
+        if self.log:
+            self.log.debug(f"[session_ncnn] loading ncnn model: {self.ncnn_model_file}")
         self.ncnn_net.load_param(self.ncnn_param_file)
         self.ncnn_net.load_model(self.ncnn_model_file)
     except Exception as e:
@@ -17,7 +18,8 @@ def session_ncnn_init(self):
 
 
 def session_ncnn_execute(self, inputs, output_names):
-    logger.debug(f"[session_ncnn] execute: {inputs.keys()} -> {output_names}")
+    if self.log:
+        self.log.debug(f"[session_ncnn] execute: {inputs.keys()} -> {output_names}")
     try:
         extractor = self.ncnn_net.create_extractor()
 

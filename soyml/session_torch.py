@@ -7,7 +7,10 @@ from minlog import logger
 def session_torch_init(self):
     # load torch model from file
     try:
-        logger.debug(f"[session_torch] loading torch model: {self.torch_model_file}")
+        if self.log:
+            self.log.debug(
+                f"[session_torch] loading torch model: {self.torch_model_file}"
+            )
         self.torch_model = torch.load(self.torch_model_file)
         self.torch_model.eval()
     except Exception as e:
@@ -15,7 +18,8 @@ def session_torch_init(self):
 
 
 def session_torch_execute(self, inputs, output_names):
-    logger.debug(f"[session_torch] execute: {inputs.keys()} -> {output_names}")
+    if self.log:
+        self.log.debug(f"[session_torch] execute: {inputs.keys()} -> {output_names}")
     try:
         torch_inputs = []
         for input_key, input_value in inputs.items():

@@ -4,9 +4,10 @@ import onnxruntime as ort
 from minlog import logger
 
 
-def select_best_providers():
+def select_best_providers(log):
     all_providers = ort.get_available_providers()
-    logger.debug(f"[session_ort] all providers: {all_providers}")
+    if log:
+        log.debug(f"[session_ort] all providers: {all_providers}")
 
     accel_providers = [
         "CUDAExecutionProvider",
@@ -24,8 +25,9 @@ def select_best_providers():
 
 def session_ort_init(self):
     try:
-        execution_providers = select_best_providers()
-        logger.debug(f"[session_ort] execution providers: {execution_providers}")
+        execution_providers = select_best_providers(self.log)
+        if self.log:
+            self.log.debug(f"[session_ort] execution providers: {execution_providers}")
         self.ort_session = ort.InferenceSession(
             self.ort_model_file, providers=execution_providers
         )
@@ -42,7 +44,8 @@ def session_ort_init(self):
 
 
 def session_ort_execute(self, inputs, output_names):
-    logger.debug(f"[session_ort] execute: {inputs.keys()} -> {output_names}")
+    if self.log:
+        self.log.debug(f"[session_ort] execute: {inputs.keys()} -> {output_names}")
     try:
         outputs = self.ort_session.run(output_names, inputs)
     except Exception as e:
