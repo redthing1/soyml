@@ -6,7 +6,7 @@ authors = ["redthing1 <redthing1@alt.icu>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.11"
+python = "^3.9"
 minlog = "^0.4.0"
 numpy = "^1.25.1"
 onnx = "^1.14.0"
