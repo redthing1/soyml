@@ -2,16 +2,20 @@ import os
 
 from .backends import SoyMLBackend
 from .session import SoyMLSession
+from minlog import logger
 
 
 class SoyMLLoader(object):
     def __init__(self, model_dir: str, log=None):
         self.model_dir = model_dir
-        self.log = log.logger_for("soyml_loader") if log else None
+        self.log = log.logger_for("soyml_loader") if log else logger
 
     def load_session(self, model_basename, backend):
         self.ensure_model_files_exist(model_basename, backend)
         model_fnames = self.get_model_file_names(model_basename, backend)
+
+        self.log.debug(f"loading model files: {model_fnames}")
+
         if backend == SoyMLBackend.ONNXRUNTIME:
             return SoyMLSession(
                 log=self.log,

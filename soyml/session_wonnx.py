@@ -5,11 +5,9 @@ from minlog import logger
 
 
 def session_wonnx_init(self):
+    log = self.log.logger_for("session_wonnx")
     try:
-        if self.log:
-            self.log.debug(
-                f"[session_wonnx] loading wonnx model: {self.wonnx_model_file}"
-            )
+        log.debug(f"loading wonnx model: {self.wonnx_model_file}")
         self.wonnx_session = wonnx.Session.from_path(self.wonnx_model_file)
         onnx_model = onnx.load(self.wonnx_model_file)
         # get input/output names and shapes
@@ -31,28 +29,25 @@ def session_wonnx_init(self):
             self.output_shapes[output.name] = [
                 get_dim_shape(dim) for dim in output.type.tensor_type.shape.dim
             ]
-        if self.log:
-            self.log.debug(f"[session_wonnx] wonnx input shapes: {self.input_shapes}")
-        if self.log:
-            self.log.debug(f"[session_wonnx] wonnx output shapes: {self.output_shapes}")
+        log.debug(f"wonnx input shapes: {self.input_shapes}")
+        log.debug(f"wonnx output shapes: {self.output_shapes}")
         del onnx_model
     except Exception as e:
         raise Exception(f"failed to load wonnx model: {e}")
 
 
 def session_wonnx_execute(self, inputs, output_names):
-    if self.log:
-        self.log.debug(f"[session_wonnx] execute: {inputs.keys()} -> {output_names}")
+    log = self.log.logger_for("session_wonnx")
+    log.debug(f"execute: {inputs.keys()} -> {output_names}")
     try:
         # outputs = self.wonnx_session.run(inputs)
         # wonnx python is stupid, and requires you to completely flatten the input
         flat_inputs = {}
         for input_key, input_value in inputs.items():
             flat_inputs[input_key] = input_value.flatten()
-            if self.log:
-                self.log.trace(
-                    f"[session_wonnx] wonnx input {input_key} shape: {input_value.shape} -> flattening to {flat_inputs[input_key].shape}"
-                )
+            log.trace(
+                f"wonnx input {input_key} shape: {input_value.shape} -> flattening to {flat_inputs[input_key].shape}"
+            )
 
         raw_outputs = self.wonnx_session.run(flat_inputs)
 
@@ -61,10 +56,9 @@ def session_wonnx_execute(self, inputs, output_names):
         for output_key, output_value in raw_outputs.items():
             this_output_shape = self.output_shapes[output_key]
             np_output_value = np.array(output_value)
-            if self.log:
-                self.log.trace(
-                    f"[session_wonnx] wonnx output {output_key} shape: {np_output_value.shape} -> reshaping to {this_output_shape}"
-                )
+            log.trace(
+                f"wonnx output {output_key} shape: {np_output_value.shape} -> reshaping to {this_output_shape}"
+            )
             outputs[output_key] = np_output_value.reshape(this_output_shape)
 
         # collect outputs into a list

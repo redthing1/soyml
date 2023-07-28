@@ -5,11 +5,11 @@ from minlog import logger
 
 
 def session_ncnn_init(self):
+    log = self.log.logger_for("session_ncnn")
     try:
         self.ncnn_net = ncnn.Net()
         self.ncnn_net.opt.use_vulkan_compute = True
-        if self.log:
-            self.log.debug(f"[session_ncnn] loading ncnn model: {self.ncnn_model_file}")
+        log.debug(f"loading ncnn model: {self.ncnn_model_file}")
         self.ncnn_net.load_param(self.ncnn_param_file)
         self.ncnn_net.load_model(self.ncnn_model_file)
     except Exception as e:
@@ -18,8 +18,8 @@ def session_ncnn_init(self):
 
 
 def session_ncnn_execute(self, inputs, output_names):
-    if self.log:
-        self.log.debug(f"[session_ncnn] execute: {inputs.keys()} -> {output_names}")
+    log = self.log.logger_for("session_ncnn")
+    log.debug(f"execute: {inputs.keys()} -> {output_names}")
     try:
         extractor = self.ncnn_net.create_extractor()
 

@@ -1,5 +1,5 @@
 from .backends import SoyMLBackend
-
+from minlog import logger
 
 class SoyMLSession(object):
     def __init__(
@@ -15,7 +15,7 @@ class SoyMLSession(object):
         use_torch=False,
         torch_model_file=None,
     ):
-        self.log = log.logger_for("soyml_session") if log else None
+        self.log = log.logger_for("soyml_session") if log else logger
 
         self.backend = SoyMLBackend.UNKNOWN
         if use_ort:
@@ -50,8 +50,7 @@ class SoyMLSession(object):
 
             session_torch_init(self)
 
-        if self.log:
-            self.log.trace(f"initialized session with backend {self.backend}")
+        self.log.trace(f"initialized session with backend {self.backend}")
 
     def execute(self, inputs, output_names):
         # # ensure there's exactly one output (for now)

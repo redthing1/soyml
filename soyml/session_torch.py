@@ -5,12 +5,10 @@ from minlog import logger
 
 
 def session_torch_init(self):
+    log = self.log.logger_for("session_torch")
     # load torch model from file
     try:
-        if self.log:
-            self.log.debug(
-                f"[session_torch] loading torch model: {self.torch_model_file}"
-            )
+        log.debug(f"loading torch model: {self.torch_model_file}")
         self.torch_model = torch.load(self.torch_model_file)
         self.torch_model.eval()
     except Exception as e:
@@ -18,8 +16,8 @@ def session_torch_init(self):
 
 
 def session_torch_execute(self, inputs, output_names):
-    if self.log:
-        self.log.debug(f"[session_torch] execute: {inputs.keys()} -> {output_names}")
+    log = self.log.logger_for("session_torch")
+    log.debug(f"execute: {inputs.keys()} -> {output_names}")
     try:
         torch_inputs = []
         for input_key, input_value in inputs.items():
