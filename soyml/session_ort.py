@@ -3,10 +3,10 @@ import onnx
 import onnxruntime as ort
 
 
-def select_best_providers(log):
+def select_best_providers():
     all_providers = ort.get_available_providers()
-    if log:
-        log.debug(f"all providers: {all_providers}")
+    # if log:
+    #     log.debug(f"all providers: {all_providers}")
 
     accel_providers = [
         "CUDAExecutionProvider",
@@ -22,13 +22,15 @@ def select_best_providers(log):
             return [provider]
 
 
+best_execution_providers = select_best_providers()
+
+
 def session_ort_init(self):
     log = self.log.logger_for("session_ort")
     try:
-        execution_providers = select_best_providers(log)
-        log.debug(f"execution providers: {execution_providers}")
+        log.debug(f"creating ort inference session with providers: {best_execution_providers}")
         self.ort_session = ort.InferenceSession(
-            self.ort_model_file, providers=execution_providers
+            self.ort_model_file, providers=best_execution_providers
         )
         self.inputs = self.ort_session.get_inputs()
         self.outputs = self.ort_session.get_outputs()
