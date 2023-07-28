@@ -1,0 +1,35 @@
+[tool.poetry]
+name = "soyml"
+version = "0.1.0"
+description = ""
+authors = ["redthing1 <redthing1@alt.icu>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.11"
+minlog = "^0.4.0"
+numpy = "^1.25.1"
+onnx = "^1.14.0"
+onnxruntime = "^1.15.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.wonnx]
+optional = true
+
+[tool.poetry.group.wonnx.dependencies]
+wonnx = "^0.5.0"
+
+[tool.poetry.group.ncnn]
+optional = true
+
+[tool.poetry.group.ncnn.dependencies]
+ncnn-vulkan = "^2023.6.18"
+
+[tool.poetry.group.torch]
+optional = true
+
+[tool.poetry.group.torch.dependencies]
+torch = "^2.0.1"
