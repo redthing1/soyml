@@ -19,7 +19,6 @@ def session_ncnn_init(self):
 
 def session_ncnn_execute(self, inputs, output_names):
     log = self.log.logger_for("session_ncnn")
-    log.debug(f"execute: {inputs.keys()} -> {output_names}")
     try:
         extractor = self.ncnn_net.create_extractor()
 

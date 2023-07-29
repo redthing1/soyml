@@ -1,19 +1,22 @@
+from typing import List, Dict, Tuple, Any, Optional
+
 from .backends import SoyMLBackend
 from minlog import logger
+
 
 class SoyMLSession(object):
     def __init__(
         self,
-        log=None,
-        use_ort=False,
-        ort_model_file=None,
-        use_ncnn=False,
-        ncnn_param_file=None,
-        ncnn_model_file=None,
-        use_wonnx=False,
-        wonnx_model_file=None,
-        use_torch=False,
-        torch_model_file=None,
+        log: Optional[Any] = None,
+        use_ort: bool = False,
+        ort_model_file: Optional[str] = None,
+        use_ncnn: bool = False,
+        ncnn_param_file: Optional[str] = None,
+        ncnn_model_file: Optional[str] = None,
+        use_wonnx: bool = False,
+        wonnx_model_file: Optional[str] = None,
+        use_torch: bool = False,
+        torch_model_file: Optional[str] = None,
     ):
         self.log = log.logger_for("soyml_session") if log else logger
 
@@ -52,12 +55,12 @@ class SoyMLSession(object):
 
         self.log.trace(f"initialized session with backend {self.backend}")
 
-    def execute(self, inputs, output_names):
-        # # ensure there's exactly one output (for now)
-        # if len(output_names) != 1:
-        #     raise Exception(f"expected exactly one output, but got {len(output_names)}")
-
-        # execute the model
+    def execute(self, inputs: Dict[str, Any], output_names: List[str]):
+        inputs_str = [
+            f"{input_key}{input_value.shape}"
+            for input_key, input_value in inputs.items()
+        ]
+        self.log.trace(f"executing ({self.backend}): {inputs_str} -> {output_names}")
 
         if self.backend == SoyMLBackend.ONNXRUNTIME:
             from .session_ort import session_ort_execute

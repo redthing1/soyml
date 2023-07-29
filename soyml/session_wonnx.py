@@ -38,7 +38,6 @@ def session_wonnx_init(self):
 
 def session_wonnx_execute(self, inputs, output_names):
     log = self.log.logger_for("session_wonnx")
-    log.debug(f"execute: {inputs.keys()} -> {output_names}")
     try:
         # outputs = self.wonnx_session.run(inputs)
         # wonnx python is stupid, and requires you to completely flatten the input

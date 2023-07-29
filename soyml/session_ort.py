@@ -46,7 +46,6 @@ def session_ort_init(self):
 
 def session_ort_execute(self, inputs, output_names):
     log = self.log.logger_for("session_ort")
-    log.debug(f"execute: {inputs.keys()} -> {output_names}")
     try:
         outputs = self.ort_session.run(output_names, inputs)
     except Exception as e:

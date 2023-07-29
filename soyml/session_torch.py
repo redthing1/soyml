@@ -17,7 +17,6 @@ def session_torch_init(self):
 
 def session_torch_execute(self, inputs, output_names):
     log = self.log.logger_for("session_torch")
-    log.debug(f"execute: {inputs.keys()} -> {output_names}")
     try:
         torch_inputs = []
         for input_key, input_value in inputs.items():
