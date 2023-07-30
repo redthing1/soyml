@@ -27,7 +27,7 @@ class SoyMLLoader(object):
                 log=self.log,
                 use_ncnn=True,
                 ncnn_param_file=model_fnames[0],
-                ncnn_bin_file=model_fnames[1],
+                ncnn_model_file=model_fnames[1],
             )
         if backend == SoyMLBackend.WONNX:
             return SoyMLSession(
@@ -47,7 +47,7 @@ class SoyMLLoader(object):
         if backend == SoyMLBackend.ONNXRUNTIME:
             return [f"{model_basename}.sim.onnx"]
         if backend == SoyMLBackend.NCNN:
-            return [f"{model_basename}.ncnn.param", f"{model_basename}.bin"]
+            return [f"{model_basename}.ncnn.param", f"{model_basename}.ncnn.bin"]
         if backend == SoyMLBackend.WONNX:
             return [f"{model_basename}.web.onnx"]
         if backend == SoyMLBackend.TORCH:
