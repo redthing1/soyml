@@ -1,7 +1,7 @@
 import numpy as np
 
-from ncnn_vulkan import ncnn
 from minlog import logger
+import ncnn
 
 
 def session_ncnn_init(self):
@@ -13,7 +13,7 @@ def session_ncnn_init(self):
         self.ncnn_net.load_param(self.ncnn_param_file)
         self.ncnn_net.load_model(self.ncnn_model_file)
     except Exception as e:
-        ncnn.destroy_gpu_instance()  # cleanup
+        # ncnn.destroy_gpu_instance()  # cleanup
         raise Exception(f"failed to load ncnn model: {e}")
 
 
@@ -21,18 +21,16 @@ def session_ncnn_execute(self, inputs, output_names):
     log = self.log.logger_for("session_ncnn")
     try:
         extractor = self.ncnn_net.create_extractor()
-
         # for each input, we need to call ex.input
         for input_key, input_value in inputs.items():
-            # print("input shape:", input_value.shape)
-            input_mat = ncnn.Mat(input_value)
-            # print("input_mat shape:", input_mat.shape)
-            extractor.input(input_key, input_mat)
+            log.debug(
+                f"input {input_key}: shape={input_value.shape}, dtype={input_value.dtype}"
+            )
 
-        # # let's for now, expect only one output
-        # output0_key = output_names[0]
-        # ret, output0 = extractor.extract(output0_key)
-        # outputs = [output0]
+            input_mat = ncnn.Mat(input_value)
+
+            log.debug(f"  input_mat {input_key} shape: {input_mat.shape}")
+            extractor.input(input_key, input_mat)
 
         # collect outputs into a list
         outputs_list = []
@@ -43,7 +41,7 @@ def session_ncnn_execute(self, inputs, output_names):
         if ret != 0:
             raise Exception(f"failed to execute ncnn: {ret}")
     except Exception as e:
-        ncnn.destroy_gpu_instance()  # cleanup
+        # ncnn.destroy_gpu_instance()  # cleanup
         raise Exception(f"failed to execute ncnn: {e}")
 
     return np.array(outputs_list)
