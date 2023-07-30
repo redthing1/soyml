@@ -10,26 +10,18 @@ python = "^3.9"
 minlog = "^0.4.0"
 numpy = "^1.25.1"
 onnx = "^1.14.0"
-onnxruntime = "^1.15.1"
+
+onnxruntime = { version = "^1.15.1", optional = true }
+wonnx = { version = "^0.5.0", optional = true }
+ncnn-vulkan = { version = "^2023.6.18", optional = true }
+torch = { version = "^2.0.1", optional = true }
+
+[tool.poetry.extras]
+ort = ["onnxruntime"]
+wonnx = ["wonnx"]
+ncnn = ["ncnn-vulkan"]
+torch = ["torch"]
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.group.wonnx]
-optional = true
-
-[tool.poetry.group.wonnx.dependencies]
-wonnx = "^0.5.0"
-
-[tool.poetry.group.ncnn]
-optional = true
-
-[tool.poetry.group.ncnn.dependencies]
-ncnn-vulkan = "^2023.6.18"
-
-[tool.poetry.group.torch]
-optional = true
-
-[tool.poetry.group.torch.dependencies]
-torch = "^2.0.1"
