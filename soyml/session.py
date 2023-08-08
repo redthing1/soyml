@@ -65,16 +65,24 @@ class SoyMLSession(object):
         if self.backend == SoyMLBackend.ONNXRUNTIME:
             from .session_ort import session_ort_execute
 
-            return session_ort_execute(self, inputs, output_names)
+            outputs = session_ort_execute(self, inputs, output_names)
         if self.backend == SoyMLBackend.NCNN:
             from .session_ncnn import session_ncnn_execute
 
-            return session_ncnn_execute(self, inputs, output_names)
+            outputs = session_ncnn_execute(self, inputs, output_names)
         if self.backend == SoyMLBackend.WONNX:
             from .session_wonnx import session_wonnx_execute
 
-            return session_wonnx_execute(self, inputs, output_names)
+            outputs = session_wonnx_execute(self, inputs, output_names)
         if self.backend == SoyMLBackend.TORCH:
             from .session_torch import session_torch_execute
 
-            return session_torch_execute(self, inputs, output_names)
+            outputs = session_torch_execute(self, inputs, output_names)
+
+        outputs_str = [
+            f"{output_name}{output_value.shape}"
+            for output_name, output_value in zip(output_names, outputs)
+        ]
+        self.log.trace(f"  outputs: {outputs_str}")
+
+        return outputs
