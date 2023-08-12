@@ -60,7 +60,7 @@ class SoyMLSession(object):
             f"{input_key}{input_value.shape}"
             for input_key, input_value in inputs.items()
         ]
-        self.log.trace(f"executing ({self.backend}): {inputs_str} -> {output_names}")
+        self.log.debug(f"executing ({self.backend}): {inputs_str} -> {output_names}")
 
         if self.backend == SoyMLBackend.ONNXRUNTIME:
             from .session_ort import session_ort_execute
@@ -83,6 +83,6 @@ class SoyMLSession(object):
             f"{output_name}{output_value.shape}"
             for output_name, output_value in zip(output_names, outputs)
         ]
-        self.log.trace(f"  outputs: {outputs_str}")
+        self.log.debug(f"  outputs: {outputs_str}")
 
         return outputs
