@@ -28,7 +28,9 @@ best_execution_providers = select_best_providers()
 def session_ort_init(self):
     log = self.log.logger_for("session_ort")
     try:
-        log.debug(f"creating ort inference session with providers: {best_execution_providers}")
+        log.debug(
+            f"creating ort inference session with providers: {best_execution_providers}"
+        )
         self.ort_session = ort.InferenceSession(
             self.ort_model_file, providers=best_execution_providers
         )
@@ -40,6 +42,11 @@ def session_ort_init(self):
             self.input_shapes[input.name] = input.shape
         for output in self.outputs:
             self.output_shapes[output.name] = output.shape
+
+        inputs_str = [f"{input.name}{input.shape}" for input in self.inputs]
+        outputs_str = [f"{output.name}{output.shape}" for output in self.outputs]
+        log.debug(f"  ort session inputs: {inputs_str}")
+        log.debug(f"  ort session outputs: {outputs_str}")
     except Exception as e:
         raise Exception(f"failed to load ort model: {e}")
 
