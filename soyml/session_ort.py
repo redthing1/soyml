@@ -1,9 +1,10 @@
+from typing import List, Dict, Any, Optional
 import numpy as np
 import onnx
 import onnxruntime as ort
 
 
-def select_best_providers():
+def select_best_providers(blacklist: List[str] = []):
     all_providers = ort.get_available_providers()
     # if log:
     #     log.debug(f"all providers: {all_providers}")
@@ -16,17 +17,20 @@ def select_best_providers():
         "CPUExecutionProvider",
     ]
 
+    # remove blacklisted providers
+    accel_providers = [p for p in accel_providers if p not in blacklist]
+
     # go through providers in order of preference, and if one is available, use it
     for provider in accel_providers:
         if provider in all_providers:
             return [provider]
 
 
-best_execution_providers = select_best_providers()
-
-
-def session_ort_init(self, use_cpu_only: bool = False):
+def session_ort_init(
+    self, use_cpu_only: bool = False, provider_blacklist: List[str] = []
+):
     log = self.log.logger_for("session_ort")
+    best_execution_providers = select_best_providers(blacklist=provider_blacklist)
     try:
         log.debug(
             f"creating ort inference session with providers: {best_execution_providers}"
