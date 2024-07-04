@@ -25,15 +25,23 @@ def select_best_providers():
 best_execution_providers = select_best_providers()
 
 
-def session_ort_init(self):
+def session_ort_init(self, use_cpu_only: bool = False):
     log = self.log.logger_for("session_ort")
     try:
         log.debug(
             f"creating ort inference session with providers: {best_execution_providers}"
         )
-        self.ort_session = ort.InferenceSession(
-            self.ort_model_file, providers=best_execution_providers
-        )
+        # if use cpu only, then only use CPUExecutionProvider
+        if use_cpu_only:
+            self.ort_session = ort.InferenceSession(
+                self.ort_model_file,
+                providers=["CPUExecutionProvider"],
+            )
+        # otherwise, we can use the best available compute provider
+        else:
+            self.ort_session = ort.InferenceSession(
+                self.ort_model_file, providers=best_execution_providers
+            )
         self.inputs = self.ort_session.get_inputs()
         self.outputs = self.ort_session.get_outputs()
         self.input_shapes = {}

@@ -9,6 +9,7 @@ class SoyMLSession(object):
         self,
         log: Optional[Any] = None,
         use_ort: bool = False,
+        ort_use_cpu_only: bool = False,
         ort_model_file: Optional[str] = None,
         use_ncnn: bool = False,
         ncnn_param_file: Optional[str] = None,
@@ -27,7 +28,7 @@ class SoyMLSession(object):
             # load the model
             from .session_ort import session_ort_init
 
-            session_ort_init(self)
+            session_ort_init(self, cpu_only=ort_use_cpu_only)
         if use_ncnn:
             self.backend = SoyMLBackend.NCNN
             self.ncnn_param_file = ncnn_param_file

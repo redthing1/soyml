@@ -10,7 +10,7 @@ class SoyMLLoader(object):
         self.model_dir = model_dir
         self.log = log.logger_for("soyml_loader") if log else logger
 
-    def load_session(self, model_basename, backend):
+    def load_session(self, model_basename, backend, use_cpu_only=False):
         self.ensure_model_files_exist(model_basename, backend)
         model_fnames = self.get_model_file_names(model_basename, backend)
 
@@ -20,6 +20,7 @@ class SoyMLLoader(object):
             return SoyMLSession(
                 log=self.log,
                 use_ort=True,
+                ort_use_cpu_only=use_cpu_only,
                 ort_model_file=model_fnames[0],
             )
         if backend == SoyMLBackend.NCNN:
