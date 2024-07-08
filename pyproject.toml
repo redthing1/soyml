@@ -2,7 +2,7 @@
 name = "soyml"
 version = "0.1.0"
 description = ""
-authors = ["example author <example@example.com>"]
+authors = ["redthing1 <redthing1@alt.icu>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
