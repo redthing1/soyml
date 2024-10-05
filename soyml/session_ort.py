@@ -55,8 +55,12 @@ def session_ort_init(
         for output in self.outputs:
             self.output_shapes[output.name] = output.shape
 
-        inputs_str = [f"{input.name}{input.shape}" for input in self.inputs]
-        outputs_str = [f"{output.name}{output.shape}" for output in self.outputs]
+        inputs_str = [
+            f"{input.name}@{input.type}{input.shape}" for input in self.inputs
+        ]
+        outputs_str = [
+            f"{output.name}@{output.type}{output.shape}" for output in self.outputs
+        ]
         log.debug(f"  ort session inputs: {inputs_str}")
         log.debug(f"  ort session outputs: {outputs_str}")
     except Exception as e:

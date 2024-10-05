@@ -82,7 +82,7 @@ class SoyMLSession(object):
             outputs = session_torch_execute(self, inputs, output_names)
 
         outputs_str = [
-            f"{output_name}{output_value.shape}"
+            f"{output_name}@{output_value.dtype}{output_value.shape}"
             for output_name, output_value in zip(output_names, outputs)
         ]
         self.log.debug(f"  outputs: {outputs_str}")
