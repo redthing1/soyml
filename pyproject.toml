@@ -7,8 +7,8 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-minlog = "^0.4.0"
-numpy = "^1.25.1"
+minlog = "^0.5.2"
+numpy = "<2.0.0"
 onnx = "^1.16.1"
 
 onnxruntime = { version = "^1.16.3", optional = true }
