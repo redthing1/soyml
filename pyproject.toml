@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "soyml"
-version = "0.2.3"
+version = "0.3.0"
 description = ""
 authors = ["redthing1 <redthing1@alt.icu>"]
 readme = "README.md"
