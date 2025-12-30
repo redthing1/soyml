@@ -9,6 +9,7 @@ def select_best_providers(blacklist: Optional[List[str]] = None):
     all_providers = ort.get_available_providers()
     accel_providers = [
         "CUDAExecutionProvider",
+        "MIGraphXExecutionProvider",
         "ROCMExecutionProvider",
         "CoreMLExecutionProvider",
         "DirectMLExecutionProvider",
