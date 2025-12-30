@@ -10,7 +10,7 @@ class SoyMLSession(object):
         log: Optional[Any] = None,
         use_ort: bool = False,
         ort_use_cpu_only: bool = False,
-        ort_provider_blacklist: List[str] = [],
+        ort_provider_blacklist: Optional[List[str]] = None,
         ort_model_file: Optional[str] = None,
         use_ncnn: bool = False,
         ncnn_param_file: Optional[str] = None,
@@ -29,7 +29,11 @@ class SoyMLSession(object):
             # load the model
             from .session_ort import session_ort_init
 
-            session_ort_init(self, use_cpu_only=ort_use_cpu_only, provider_blacklist=ort_provider_blacklist)
+            session_ort_init(
+                self,
+                use_cpu_only=ort_use_cpu_only,
+                provider_blacklist=ort_provider_blacklist,
+            )
         if use_ncnn:
             self.backend = SoyMLBackend.NCNN
             self.ncnn_param_file = ncnn_param_file

@@ -77,17 +77,22 @@ def _configure_session_options(
 
 
 def session_ort_init(
-    self, use_cpu_only: bool = False, provider_blacklist: Optional[List[str]] = None
+    self,
+    use_cpu_only: bool = False,
+    provider_blacklist: Optional[List[str]] = None,
 ):
     log = self.log.logger_for("session_ort")
     model_name = None
     if getattr(self, "ort_model_file", None):
         model_name = os.path.splitext(os.path.basename(self.ort_model_file))[0]
     session_options, flush_profile = _configure_session_options(log, model_name)
+    blacklist = []
+    if provider_blacklist:
+        blacklist.extend(provider_blacklist)
     providers = (
         ["CPUExecutionProvider"]
         if use_cpu_only
-        else select_best_providers(blacklist=provider_blacklist)
+        else select_best_providers(blacklist=blacklist)
     )
 
     try:

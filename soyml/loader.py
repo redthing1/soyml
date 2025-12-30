@@ -5,18 +5,25 @@ from minlog import logger
 
 
 class SoyMLLoader(object):
-    def __init__(self, model_dir: str, log=None, use_cpu_only=False):
+    def __init__(
+        self,
+        model_dir: str,
+        log=None,
+        use_cpu_only: bool = False,
+    ):
         self.model_dir = model_dir
         self.log = log.logger_for("soyml_loader") if log else logger
         self.use_cpu_only = use_cpu_only
 
-    def load_session(self, model_basename, backend, device_blacklist=[]):
+    def load_session(self, model_basename, backend, device_blacklist=None):
         """
         Load a model session from model file in the model directory.
         :param model_basename: the base name of the model file (without extension/suffix)
         :param backend: the inference backend to use for the model
         :param device_blacklist: a list of devices to blacklist for inference of this model
         """
+        if device_blacklist is None:
+            device_blacklist = []
         model_fnames = self.resolve_model_files(model_basename, backend)
         self.log.debug(f"loading model files: {model_fnames}")
 
