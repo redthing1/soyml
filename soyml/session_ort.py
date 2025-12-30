@@ -28,23 +28,35 @@ def _env_truthy(name: str) -> bool:
     return value is not None and str(value).lower() not in ("0", "false", "no", "off")
 
 
-def _get_profile_prefix() -> Optional[str]:
+def _sanitize_profile_label(value: str) -> str:
+    return "".join(ch if ch.isalnum() or ch in ("-", "_", ".") else "_" for ch in value)
+
+
+def _get_profile_prefix(model_name: Optional[str] = None) -> Optional[str]:
     if not _env_truthy("SOYML_ORT_PROFILE"):
         return None
     prefix = os.getenv("SOYML_ORT_PROFILE_PREFIX")
     if prefix:
-        return prefix
+        base_dir = os.path.dirname(prefix)
+        base_name = os.path.basename(prefix)
+        if model_name:
+            base_name = f"{base_name}_{_sanitize_profile_label(model_name)}"
+        return os.path.join(base_dir, base_name) if base_dir else base_name
 
     out_dir = os.getenv("SOYML_ORT_PROFILE_DIR", ".")
     ts = time.strftime("%Y%m%d_%H%M%S")
-    return os.path.join(out_dir, f"ort_profile_{ts}_{os.getpid()}_{time.time_ns()}")
+    base_name = f"ort_profile_{ts}_{os.getpid()}_{time.time_ns()}"
+    if model_name:
+        base_name = f"{base_name}_{_sanitize_profile_label(model_name)}"
+    return os.path.join(out_dir, base_name)
 
 
 def _configure_session_options(
     log,
+    model_name: Optional[str] = None,
 ) -> tuple[ort.SessionOptions, Optional[Callable[[ort.InferenceSession], None]]]:
     session_options = ort.SessionOptions()
-    profile_prefix = _get_profile_prefix()
+    profile_prefix = _get_profile_prefix(model_name)
     if not profile_prefix:
         return session_options, None
 
@@ -68,7 +80,10 @@ def session_ort_init(
     self, use_cpu_only: bool = False, provider_blacklist: Optional[List[str]] = None
 ):
     log = self.log.logger_for("session_ort")
-    session_options, flush_profile = _configure_session_options(log)
+    model_name = None
+    if getattr(self, "ort_model_file", None):
+        model_name = os.path.splitext(os.path.basename(self.ort_model_file))[0]
+    session_options, flush_profile = _configure_session_options(log, model_name)
     providers = (
         ["CPUExecutionProvider"]
         if use_cpu_only
